@@ -1,8 +1,8 @@
-from PIL import Image, ImageSequence
+from PIL import ImageSequence
 from easyhid import Enumeration
 from time import sleep
 from signal import signal, SIGINT, SIGTERM
-from sys import exit, argv
+from sys import exit
 import animation
 
 # Screen resolution (Keyboards have 128,40)
@@ -10,7 +10,7 @@ resolution = (128, 40)
 
 # List of known working devices, add your PID here (Only tested Apex 5)
 #                Apex 7,  7 TKL, Pro, Apex 5
-supported_pid = (0x1612, 0x1618, 0x1610, 5660)
+supported_pid = (5650, 5656, 5648, 5660)
 
 def getdevice():
     # Stores an enumeration of all the connected USB HID devices
@@ -22,11 +22,15 @@ def getdevice():
         exit("No SteelSeries devices found, exiting.")
 
     for device in devices:
-        print(f"PID: {device.product_id}")
         if device.product_id in supported_pid:
+            print(f"Found device: {device.product_string}")
             return device
 
-    exit("No compatible SteelSeries devices found, exiting.")
+    print("Non supported PIDs:")
+    for device in devices:
+        print(f"{device.product_string}: {device.product_id}")
+
+    exit("\nNo compatible SteelSeries devices found, exiting.")
 
 
 def main():
@@ -55,7 +59,7 @@ def main():
     sleeptime = 0.1
 
     # send the frames to the keyboard
-    while(1):
+    while(True):
         # generate a new image using the DVD screensaver function
         image = animation.generate(resolution)
 
@@ -73,8 +77,6 @@ def main():
             for data in resizedframes:
                 dev.send_feature_report(data)
                 sleep(sleeptime)
-
-    dev.close()
 
 
 if __name__ == "__main__":

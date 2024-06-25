@@ -1,5 +1,5 @@
 import numpy as np
-from PIL import Image, ImageOps
+from PIL import Image
 
 # Load the logo image
 logo = Image.open("logo.png").convert("RGBA")
